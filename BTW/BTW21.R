@@ -21,9 +21,9 @@ p
 # Export plot as JSON/HTML/PNG
 # plotly::plotly_json(plotly::ggplotly(p))
 # 
-# htmlwidgets::saveWidget(plotly::ggplotly(p), "index.html")
+# htmlwidgets::saveWidget(plotly::ggplotly(p), "Export/index.html")
 # 
-# ggsave("scatter.png", device = "png", width = 18, height = 16, dpi = 600, plot = p)
+# ggsave("Export/scatter.png", device = "png", width = 18, height = 16, dpi = 600, plot = p)
 
 rm(btw21, p)
 
@@ -56,7 +56,7 @@ ggplot(dat, aes(x,y)) +
   annotate("text", x = Z - 0.05, y = log(Z/(1-Z)), label = "Zweitstimmenanteil\nGregor Gysi", vjust = 0, family = "Avenir Next Condensed")
 
 # Export as PNG
-# ggsave("Gysi.png", device = "png", width = 16, height = 9, dpi = 600)
+# ggsave("Export/Gysi.png", device = "png", width = 16, height = 9, dpi = 600)
 
 rm(x,y,d,E,Z,dat)
 
@@ -77,11 +77,11 @@ ggplot(data, aes(x, Log, color = type)) +
   theme(text = element_text(family = "Avenir Next Condensed"))
 
 # Export as PNG
-# ggsave("Log.png", device = "png", width = 16, height = 9, dpi = 600)
+# ggsave("Export/Log.png", device = "png", width = 16, height = 9, dpi = 600)
 
 rm(data)
 
-# Plor Distribution
+# Plot Distribution
 
 ggplot(e, aes(Zweit)) + 
   geom_boxplot() +
@@ -95,4 +95,4 @@ ggplot(e, aes(Zweit)) +
   theme(text = element_text(family = "Avenir Next Condensed"))
 
 # Export as PNG
-# ggsave("Box.png", device = "png", width = 16, height = 9, dpi = 600)
+# ggsave("Export/Box.png", device = "png", width = 16, height = 9, dpi = 600)
