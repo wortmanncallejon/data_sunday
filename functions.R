@@ -12,15 +12,6 @@ get_btw21 <- function() {
                               TRUE ~ Gruppenname)) %>% 
     select(ID, Partei, Zweit)
   
-  g <- read_csv("BTW/Data/data-lmBZp.csv") %>% 
-    mutate(Name = str_glue("{Nachname}, {Vornamen}")) %>% 
-    select(Gebietsnummer, Gruppenname, Name) %>% 
-    rename(ID = Gebietsnummer,
-           Partei = Gruppenname) %>% 
-    mutate(Partei = factor(case_when(Partei == "CDU" ~ "UNION",
-                                     Partei == "CSU" ~ "UNION",
-                                     TRUE ~ Partei)))
-  
   Länder <- read_csv2("BTW/Data/btw2021_kerg2.csv", skip = 9) %>% 
     filter(Gebietsnummer %in% c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11","12", "13", "14", "15", "16")) %>% 
     select(Gebietsnummer, Gebietsname) %>% 
@@ -36,6 +27,17 @@ get_btw21 <- function() {
            WK_Name = Gebietsname) %>% 
     group_by(WK_Name) %>% 
     summarize(ID = mean(ID))
+  
+  g <- read_csv2("BTW/Data/btw21_kandidaturen_utf8.csv", skip = 8) %>% 
+    filter(Kennzeichen == "Kreiswahlvorschlag" &
+           Gruppenname %in% c("CDU", "CSU", "SPD", "GRÜNE", "FDP", "AfD", "DIE LINKE")) %>% 
+    mutate(Name = str_glue("{Nachname}, {Vornamen}")) %>% 
+    rename(ID = Gebietsnummer,
+           Partei = Gruppenname) %>% 
+    select(ID, Partei, Name) %>% 
+    mutate(Partei = factor(case_when(Partei == "CDU" ~ "UNION",
+                                     Partei == "CSU" ~ "UNION",
+                                     TRUE ~ Partei)))
   
   btw21 <- read_csv2("BTW/Data/btw2021_kerg2.csv", skip = 9) %>% 
     filter(!Gebietsnummer %in% c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11","12", "13", "14", "15", "16", "99") &
@@ -73,14 +75,7 @@ get_btw21 <- function() {
            Alpha = case_when(is.na(Name) ~ 0.5,
                              !is.na(Name) ~ 1),
            D = Erst - Zweit,
-           Log = log(Erst/(1-Erst)) - log(Zweit/(1-Zweit)),
-           Name = case_when(ID == 100 & Partei == "FDP" ~ "Lindner, Christian",
-                            ID == 205 & Partei == "DIE LINKE" ~ "Trabert, Gerhard",
-                            ID == 100 & Partei == "FDP" ~ "Graf Lambsdorff, Alexander",
-                            ID == 3 & Partei == "FDP" ~ "Kubicki, Wolfgang",
-                            ID == 159 & Partei == "DIE LINKE" ~ "Kipping, Katja",
-                            ID == 280 & Partei == "SPD" ~ "Esken, Saskia",
-                            TRUE ~ as.character(Name))) %>%
+           Log = log(Erst/(1-Erst)) - log(Zweit/(1-Zweit))) %>%
     mutate(Label = str_glue("{Name} (WK {ID})")) %>% 
     arrange(desc(Log)) %>%
     rowid_to_column("N") %>%
